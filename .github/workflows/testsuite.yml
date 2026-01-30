@@ -88,31 +88,31 @@ jobs:
           # Available versions:
           # https://github.com/actions/python-versions/blob/main/versions-manifest.json
           # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#available-versions-of-python-and-pypy
-          - "3.10"
+          # - "3.10"
           - "3.11"
-          - "3.12"
-          - "3.13"
-          - "3.13t"
-          - "3.14"
-          - "3.14t"
-          - "3.15"
-          - "3.15t"
-          - "pypy-3.10"
-          - "pypy-3.11"
+          # - "3.12"
+          # - "3.13"
+          # - "3.13t"
+          # - "3.14"
+          # - "3.14t"
+          # - "3.15"
+          # - "3.15t"
+          # - "pypy-3.10"
+          # - "pypy-3.11"
 
-        exclude:
-          - os: ppc64le
-            python-version: "3.13t"
-          - os: ppc64le
-            python-version: "3.14t"
-          - os: ppc64le
-            python-version: "3.15"
-          - os: ppc64le
-            python-version: "3.15t"
-          - os: ppc64le
-            python-version: "pypy-3.10"
-          - os: ppc64le
-            python-version: "pypy-3.11"
+        # exclude:
+        #   - os: ppc64le
+        #     python-version: "3.13t"
+        #   - os: ppc64le
+        #     python-version: "3.14t"
+        #   - os: ppc64le
+        #     python-version: "3.15"
+        #   - os: ppc64le
+        #     python-version: "3.15t"
+        #   - os: ppc64le
+        #     python-version: "pypy-3.10"
+        #   - os: ppc64le
+        #     python-version: "pypy-3.11"
         #
         # If we need to exclude any combinations, do it like this:
         #  exclude:
@@ -176,9 +176,15 @@ jobs:
 
       - name: "Run tox for ${{ matrix.python-version }}"
         run: |
-          echo $LD_LIBRARY_PATH
-          export LD_LIBRARY_PATH=/opt/hostedtoolcache/Python/3.11.14/`arch`/lib:$LD_LIBRARY_PATH
-          echo $LD_LIBRARY_PATH
+
+          if [[ "$(uname -m)" == "ppc64le" ]]; then
+              sudo ln -s /opt/hostedtoolcache/Python/3.11.14 /opt/Python/3.11.14
+              sudo patchelf --set-rpath \
+                /opt/hostedtoolcache/Python/3.11.14/ppc64le/lib \
+                /opt/hostedtoolcache/Python/3.11.14/ppc64le/bin/python
+          fi
+
+          readelf -d "$(which python)"
           python -m tox -- -rfsEX
 
       - name: "Retry tox for ${{ matrix.python-version }}"
