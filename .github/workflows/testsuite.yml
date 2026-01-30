@@ -178,6 +178,7 @@ jobs:
         run: |
 
           if [[ "$(uname -m)" == "ppc64le" ]]; then
+              sudo mkdir -p /opt/Python
               sudo ln -s /opt/hostedtoolcache/Python/3.11.14 /opt/Python/3.11.14
               sudo patchelf --set-rpath \
                 /opt/hostedtoolcache/Python/3.11.14/ppc64le/lib \
