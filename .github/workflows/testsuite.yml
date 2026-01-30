@@ -176,8 +176,9 @@ jobs:
 
       - name: "Run tox for ${{ matrix.python-version }}"
         run: |
-          echo $LXD_LIBRARY_PATH
+          echo $LD_LIBRARY_PATH
           export LD_LIBRARY_PATH=/opt/hostedtoolcache/Python/3.11.14/`arch`/lib:$LD_LIBRARY_PATH
+          echo $LD_LIBRARY_PATH
           python -m tox -- -rfsEX
 
       - name: "Retry tox for ${{ matrix.python-version }}"
